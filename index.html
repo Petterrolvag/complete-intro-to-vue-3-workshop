@@ -12,13 +12,13 @@
 
     <h1>{{tvSerie}} (tv-series)</h1>
 
-
     <h2 v-if="mainRoleAlive === true"> Main Character: {{mainRole}}</h2>
     <h2 v-else> Main Character: Not alive</h2>
 
     <h2>Other characters</h2>
-
-    <div v-for="offRole in offRoles">{{offRole}}</div>
+  <ul>
+    <li v-for="offRole in offRoles">{{offRole}}</li>
+  </ul>
 
 
   </div>
@@ -33,7 +33,7 @@
           tvSerie: 'Andor',
           mainRole: 'Cassian Andor',
           offRoles: ['Bix Caleen', 'Luthen Rael', 'Daedra'],
-          mainRoleAlive: false,
+          mainRoleAlive: true,
 
         }
       }
