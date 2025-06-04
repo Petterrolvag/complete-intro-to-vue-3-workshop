@@ -6,5 +6,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
-  <body></body>
+  <body>
+
+  <div id="app">
+
+    <h1>{{tvSerie}} (tv-series)</h1>
+
+
+    <h2 v-if="mainRoleAlive === true"> Main Character: {{mainRole}}</h2>
+    <h2 v-else> Main Character: Not alive</h2>
+
+    <h2>Other characters</h2>
+
+    <div v-for="offRole in offRoles">{{offRole}}</div>
+
+
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <script>
+    const {createApp} = Vue
+    const app = createApp({
+      data(){
+        return {
+          tvSerie: 'Andor',
+          mainRole: 'Cassian Andor',
+          offRoles: ['Bix Caleen', 'Luthen Rael', 'Daedra'],
+          mainRoleAlive: false,
+
+        }
+      }
+
+    })
+
+    app.mount('#app')
+
+  </script>
+  </body>
 </html>
