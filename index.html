@@ -10,16 +10,30 @@
 
   <div id="app">
 
-    <h1>{{tvSerie}} (tv-series)</h1>
+    <h1>Andor (tv-series)</h1>
+    <h2> Main Character: Andor</h2>
+    <h2>Full Cast</h2>
+    <ul>
+      <li v-for="character in characterList">{{character}}
+        <button v-if="favoriteCharacterList.includes(character) === false" @click="addOrRemoveCharacterToFavorites(character)">Favorite</button>
+        <button v-else @click="addOrRemoveCharacterToFavorites(character)">Remove</button>
+      </li>
+    </ul>
 
-    <h2 v-if="mainRoleAlive === true"> Main Character: {{mainRole}}</h2>
-    <h2 v-else> Main Character: Not alive</h2>
+    <form @submit.prevent="addCharacter">
+      <input
+              type="text"
+              v-model="characterToAdd"
+              @keyup.enter="addCharacter"
+      placeholder="Add a character"
+      />
+      <button type="submit">Add character</button> <!-- mouse / tap -->
+    </form>
 
-    <h2>Other characters</h2>
-  <ul>
-    <li v-for="offRole in offRoles">{{offRole}}</li>
-  </ul>
-
+      <h2>My Favorites</h2>
+      <ul>
+        <li v-for="character in favoriteCharacterList">{{character}}</li>
+      </ul>
 
   </div>
 
@@ -30,11 +44,29 @@
     const app = createApp({
       data(){
         return {
-          tvSerie: 'Andor',
-          mainRole: 'Cassian Andor',
-          offRoles: ['Bix Caleen', 'Luthen Rael', 'Daedra'],
-          mainRoleAlive: true,
-
+          characterList: ['Cassian Andor', 'Bix Caleen', 'Luthen Rael', 'Daedra'],
+          favoriteCharacterList: ['Cassian Andor'],
+          characterToAdd: '',
+        }
+      },
+      methods: {
+        addOrRemoveCharacterToFavorites(character){
+          if(this.favoriteCharacterList.includes(character)){
+            const index = this.favoriteCharacterList.indexOf(character)
+            if(index > -1){
+              this.favoriteCharacterList.splice(index, 1)
+            }
+          }
+          else{
+            this.favoriteCharacterList.push(character)
+          }
+        },
+        addCharacter() {
+          const name = this.characterToAdd.trim();
+          if (name) {
+            this.characterList.push(name);
+            this.characterToAdd = '';          // clear the input
+          }
         }
       }
 
