@@ -14,26 +14,37 @@
     <h2> Main Character: Andor</h2>
     <h2>Full Cast</h2>
     <ul>
-      <li v-for="character in characterList">{{character}}
-        <button v-if="favoriteCharacterList.includes(character) === false" @click="addOrRemoveCharacterToFavorites(character)">Favorite</button>
+      <li v-for="character in characterList">{{character.name}} - {{ character.force}}
+        <button v-if="!isFavorite(character)" @click="addOrRemoveCharacterToFavorites(character)">Favorite</button>
         <button v-else @click="addOrRemoveCharacterToFavorites(character)">Remove</button>
       </li>
     </ul>
 
     <form @submit.prevent="addCharacter">
-      <input
-              type="text"
-              v-model="characterToAdd"
-              @keyup.enter="addCharacter"
-      placeholder="Add a character"
-      />
-      <button type="submit">Add character</button> <!-- mouse / tap -->
+      <div>
+        <input
+                type="text"
+                v-model="characterToAdd"
+                @keyup.enter="addCharacter"
+                placeholder="Add a character"
+        />
+        <input
+                type="number"
+                v-model="forceToAdd"
+                @keyup.enter="addCharacter"
+                placeholder="Add a force"
+        />
+        <button type="submit">Add character</button>
+      </div>
+
     </form>
 
       <h2>My Favorites</h2>
       <ul>
-        <li v-for="character in favoriteCharacterList">{{character}}</li>
+        <li v-for="character in favoriteCharacterList">{{character.name}}</li>
       </ul>
+
+      <h2>{{displayForceLevel}}</h2>
 
   </div>
 
@@ -44,29 +55,66 @@
     const app = createApp({
       data(){
         return {
-          characterList: ['Cassian Andor', 'Bix Caleen', 'Luthen Rael', 'Daedra'],
-          favoriteCharacterList: ['Cassian Andor'],
+          characterList: [
+            { 'name' : 'Cassian Andor', 'force' : 10},
+            { 'name' : 'Bix Caleen', 'force' : 15},
+            {'name' : 'Luthen Rael', 'force' : 20},
+            {'name': 'Daedra', 'force' : 30}
+          ],
+          favoriteCharacterList: [],
           characterToAdd: '',
+          forceToAdd: ''
+        }
+      },
+      computed:{
+        displayForceLevel(){
+          const totalForce = this.favoriteCharacterList.reduce((sum, c) => sum + c.force, 0);
+          if (totalForce > 100) {
+            return 'You have great force! (^_^) (' + totalForce+ ')';
+          }
+          else if (totalForce > 50) {
+            return 'You have good force! (' + totalForce+ ')';
+          }
+          else {
+            return 'Add more force (' + totalForce+ ')';
+          }
         }
       },
       methods: {
-        addOrRemoveCharacterToFavorites(character){
-          if(this.favoriteCharacterList.includes(character)){
-            const index = this.favoriteCharacterList.indexOf(character)
-            if(index > -1){
-              this.favoriteCharacterList.splice(index, 1)
-            }
+        isFavorite(charObj) {
+          // - returns true when another object with the same name is already stored
+          return this.favoriteCharacterList.some(c => c.name === charObj.name);
+        },
+
+        addOrRemoveCharacterToFavorites(charObj) {
+          const index = this.favoriteCharacterList.findIndex(
+                  c => c.name === charObj.name
+          );
+
+          if (index > -1) {
+            this.favoriteCharacterList.splice(index, 1);
           }
-          else{
-            this.favoriteCharacterList.push(character)
+          else {
+            this.favoriteCharacterList.push({ ...charObj });
           }
         },
         addCharacter() {
           const name = this.characterToAdd.trim();
-          if (name) {
-            this.characterList.push(name);
-            this.characterToAdd = '';          // clear the input
+          const force = parseInt(this.forceToAdd);
+          if (name && force) {
+            this.characterList.push({'name': name, 'force': force});
+            this.characterToAdd = '';
+            this.forceToAdd = '';
           }
+        }
+      },
+      watch: {
+        'favoriteCharacterList.length'(newLen, oldLen) {
+          console.log(
+                  newLen > oldLen
+                          ? 'You successfully added a new character to favorites'
+                          : 'You successfully removed a character from favorites'
+          );
         }
       }
 
